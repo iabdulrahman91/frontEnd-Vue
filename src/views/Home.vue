@@ -1,9 +1,12 @@
 <template>
-  <Index/>
+  <div>
+    <Index/>
+  </div>
+
 </template>
 
 <script>
-import Index from "@/components/Listings/Index";
+import Index from "@/views/Listings/Index";
 
 export default {
   components: {

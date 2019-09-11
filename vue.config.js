@@ -1,5 +1,5 @@
-module.exports = {
-    devServer: {
-        proxy: 'http://192.168.10.10/'
-    }
-}
+// module.exports = {
+//     devServer: {
+//         proxy: 'http://sharekv2-env.6bdmjadps9.us-east-2.elasticbeanstalk.com/'
+//     }
+// }
