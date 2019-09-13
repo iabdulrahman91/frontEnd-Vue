@@ -2,8 +2,8 @@
     <v-layout row class="justify-center">
 
         <!--type section-->
-        <v-flex xs12 class="mx-12">
-            <v-layout row class="justify-center" >
+        <v-flex xs12 class="mx-12" v-if="false">
+            <v-layout row class="justify-center">
                 <v-flex xs12 class="ma-3 text-center">
                     <v-layout row class="justify-center justify-space-between">
                         <v-flex xs4 sm5>
@@ -107,16 +107,23 @@
             </v-layout>
         </v-flex>
 
-        <v-flex xs12 class="px-12" >
-            <v-row justify="center">
-
-            </v-row>
+        <v-flex xs12 class="px-12 justify-space-around">
+            <vc-date-picker
+                    :attributes="attributes"
+                    v-model="selection"
+                    @input="selectedRange"
+                    :min-date="null"
+                    mode="range"
+                    is-inline
+            ></vc-date-picker>
         </v-flex>
     </v-layout>
 
 </template>
 
 <script>
+    import DateRange from "@/HelperFunctions/DateRange";
+
     export default {
         name: "Create",
         data() {
@@ -138,15 +145,53 @@
                 selectedType: '',
                 selectedCompany: '',
                 selectedModel: '',
+                // today: new Date(),
+                // tomorrow: new Date().setDate(this.today.getDate()+1),
+                selection: null,
+                ranges: [],
+                attributes: [
+                    {
+                        highlight: true,
+                        dates: []
 
-
+                    }
+                ]
             }
         },
         methods: {
+            selectedRange(val) {
+                if (val !== null) {
+                    if (val.start - val.end !== 0) {
+                        this.addRange(val)
+                    } else {
+                        let d = new Date()
+                        d.setDate(val.start.getDate() + 1)
+                        this.addRange({start: val.start, end: d})
+                    }
+                }
+            },
+            async update() {
+                setTimeout(() => this.selection = null, 100);
+            },
 
 
+            addRange(b) {
+                let removedDublicate = this.attributes[0].dates.filter(a => (a.start - b.start !== 0) && (a.end - b.end !== 0))
+                if (removedDublicate.length === this.attributes[0].dates.length) {
+                    removedDublicate.push(b)
+                }
+                removedDublicate.sort((a, b) => (a.start - b.start) ? (a.start - b.start) : ((a.end - b.end) ? (a.end - b.end) : 1))
+                this.attributes[0].dates = removedDublicate
 
+                const dr = DateRange;
+                let newlist = dr.mergeRanges(this.attributes[0].dates)
+                this.attributes[0].dates = newlist
+                this.update()
+
+
+            },
         },
+
 
     }
 </script>
