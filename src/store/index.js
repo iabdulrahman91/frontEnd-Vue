@@ -2,6 +2,7 @@ import Vuex from 'vuex';
 import Vue from 'vue';
 import listings from './modules/listings';
 import auth from './modules/auth';
+import location from "@/store/modules/location";
 
 // Load Vuex
 Vue.use(Vuex);
@@ -10,6 +11,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
     modules: {
         listings,
-        auth
+        auth,
+        location,
     }
 });
