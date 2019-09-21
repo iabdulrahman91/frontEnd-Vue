@@ -15,8 +15,10 @@ const actions = {
     async fetchCities({ commit }) {
         commit('setLoading', true);
         await axios.get('/cities')
-            .then(response => {
-                commit('setCities', response.data);
+            .then(resp => {
+                commit('setCities', Object.keys(resp.data.data).map((key) => {
+                    return resp.data.data[key].name
+                }));
             })
             .catch(() => {
                 commit('setCities', null);
@@ -24,6 +26,7 @@ const actions = {
 
         commit('setLoading', false);
     },
+
 
 
 };
