@@ -276,8 +276,6 @@
                 </v-flex>
                 <v-flex xs12 class="mx-12 mt-5">
                     <vc-date-picker
-                            ref="calendar"
-                            class="ma-auto"
                             :attributes="attributes"
                             v-model="selection"
                             @input="selectedRange"

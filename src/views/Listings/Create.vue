@@ -1,20 +1,25 @@
 <template>
     <v-layout row class="justify-center justify-space-around align-content-space-between ma-1">
         <!--Progress bar-->
-        <v-flex xs12 sm10 md8 class="mx-4 mt-5">
+        <v-flex xs12 sm10 md8 class="mx-4 mt-3">
             <v-progress-linear
-                    :active="hasBack"
+                    :active="true"
                     :value="stage"
-                    height="12"
+                    height="3"
 
             />
         </v-flex>
         <!--question section-->
         <v-flex xs12 sm10 md8 class="ma-2">
-            <Types v-if="currentStep === 0" :selectionProp="selectedType" @Selected="selectedType = $event"/>
-            <Companies v-if="currentStep === 1" :selectionProp="selectedCompany" @Selected="selectedCompany = $event"/>
-            <Models v-if="currentStep === 2" :selectionProp="selectedModel" @Selected="selectedModel = $event"/>
-            <Details v-if="currentStep === 3"/>
+            <Types v-if="currentStep === 0" :selectionProp="type" @Selected="type = $event"/>
+            <Companies v-if="currentStep === 1" :selectionProp="company" @Selected="company = $event"/>
+            <Models v-if="currentStep === 2" :selectionProp="model" @Selected="model = $event"/>
+            <Details v-if="currentStep === 3"
+                     @setLocation="location = $event"
+                     @setDelivery="delivery = $event"
+                     @setPrice="price = $event"
+                     @setDays="days = $event"
+            />
         </v-flex>
         <v-flex xs12 sm10 md8 class="mx-2">
             <!--Action-->
@@ -57,6 +62,23 @@
                             <v-icon>mdi-chevron-right</v-icon>
                         </v-btn>
                     </v-fab-transition>
+                    <v-fab-transition v-if="isLast">
+                        <v-btn
+                                v-show="stepCompleted"
+                                color="blue"
+                                dark
+                                bottom
+                                right
+                                fixed
+                                fab
+                                large
+                                @click="next"
+                                class="ma-sm-12"
+
+                        >
+                            <v-icon>mdi-chevron-right</v-icon>
+                        </v-btn>
+                    </v-fab-transition>
                 </v-flex>
 
 
@@ -83,23 +105,44 @@
         data() {
             return {
                 currentStep: 0,
-                steps: ['type', 'company', 'model', 'detail', 'confirm'],
-                selectedType: '',
-                selectedCompany: '',
-                selectedModel: '',
+                steps: ['type', 'company', 'model', 'detail'],
+                type: null,
+                company: null,
+                model: null,
+                location: null,
+                delivery: false,
+                price: null,
+                days: null,
             }
         },
         computed: {
-            stage: function () {
-                return ((this.currentStep) / this.steps.length) * 100
+            isLast(){
+                return(this.currentStep === this.steps.length-1)
+            },
+            stage() {
+                return ((this.currentStep+((this.stepCompleted&&this.hasNext)? 1:0)) / this.steps.length) * 100
             },
 
 
-            hasNext: function () {
-                return this.currentStep < this.steps.length
+            hasNext() {
+                return (this.currentStep < this.steps.length-1 && this.stepCompleted)
             },
-            hasBack: function () {
+            hasBack() {
                 return this.currentStep > 0
+            },
+            stepCompleted(){
+              switch (this.currentStep) {
+                  case 0:
+                      return this.type!==null;
+                  case 1:
+                      return this.company!==null;
+                  case 2:
+                      return this.model!==null;
+                  case 3:
+                      return (this.days!==null && this.days.length>0 && this.location !== null && this.price!==null && this.price >=0);
+                  default:
+                      return true
+              }
             }
         },
         methods: {
@@ -113,10 +156,10 @@
         },
         watch: {
             selectedType: function() {
-                this.selectedCompany = ''
+                this.company = ''
             },
             selectedCompany: function () {
-                this.selectedModel = ''
+                this.model = ''
             },
         },
         components: {
