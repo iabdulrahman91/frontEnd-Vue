@@ -8,8 +8,8 @@
 
 <script>
     import {mapGetters, mapActions} from "vuex";
-    import ListingCard from "@/components/Listing/ListingCard";
-    import Pagination from "@/components/Listing/Pagination";
+    import ListingCard from "@/components/Listing/Index/ListingCard";
+    import Pagination from "@/components/Listing/Index/Pagination";
 
     export default {
         name: "Index",

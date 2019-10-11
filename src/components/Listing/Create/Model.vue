@@ -7,12 +7,12 @@
             <v-flex xs12>
                 <v-layout row class="justify-center">
                     <v-flex
-                            xs6 sm4 md2
+                            xs6 sm4
                             class="pa-2"
                             v-for="option in options" :key="option"
                     >
                         <v-card
-                                :class=" (selection===option) ? 'blue pa-5':' pa-4' "
+                                :class="((selection===option) ? 'blue ':'') + 'pa-4'"
                                 @click="setSelected(option)">
                             <v-card-title>
                                 {{option}}

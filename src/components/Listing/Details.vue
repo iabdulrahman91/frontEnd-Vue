@@ -4,17 +4,7 @@
             <v-label class="font-weight-light grey--text">Please tell user where</v-label>
         </v-flex>
         <v-flex xs12 sm6>
-            <v-autocomplete
-                    :items="Cities"
-                    :search-input.sync="search"
-                    v-model="location"
-                    :item-value="id"
-                    hide-details
-                    label="Where is this item located"
-                    class="mx-4"
-                    flat
-                    @input="setLocation"
-            ></v-autocomplete>
+
         </v-flex>
         <v-flex xs12 sm6>
             <v-switch
@@ -39,16 +29,7 @@
             ></v-text-field>
         </v-flex>
         <v-flex xs12 sm6>
-            <vc-date-picker
-                    class="ma-auto mt-5"
-                    :attributes="attributes"
-                    v-model="selection"
-                    @input="selectedRange"
-                    :min-date="today"
-                    mode="range"
-                    is-inline
-            ></vc-date-picker>
-            <v-btn @click="clearCalendar" color="danger" text>Clear</v-btn>
+
         </v-flex>
 
     </v-layout>
@@ -105,45 +86,7 @@
             setDelivery(){
                 this.$emit('setDelivery', this.delivery)
             },
-            selectedRange(val) {
-                if (val !== null) {
-                    if (val.start - val.end !== 0) {
-                        this.addRange(val)
-                    } else {
-                        let d = new Date()
-                        d.setDate(val.start.getDate() + 1)
-                        this.addRange({start: val.start, end: d})
-                    }
-                }
-            },
 
-            async clearCalendar() {
-
-                this.attributes = [
-                    {
-                        highlight: true,
-                        dates: []
-
-                    }
-                ]
-                setTimeout(() => this.selection = null, 100);
-                this.$emit('setDays', this.days)
-            },
-
-            async addRange(b) {
-                let removedDublicate = this.attributes[0].dates.filter(a => (a.start - b.start !== 0) && (a.end - b.end !== 0))
-                if (removedDublicate.length === this.attributes[0].dates.length) {
-                    removedDublicate.push(b)
-                }
-                removedDublicate.sort((a, b) => (a.start - b.start) ? (a.start - b.start) : ((a.end - b.end) ? (a.end - b.end) : 1))
-                this.attributes[0].dates = removedDublicate
-
-                const dr = DateRange;
-                let newlist = dr.mergeRanges(this.attributes[0].dates)
-                this.attributes[0].dates = newlist
-                setTimeout(() => this.selection = null, 100);
-                this.$emit('setDays', this.days)
-            },
 
         },
     }

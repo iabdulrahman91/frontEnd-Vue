@@ -7,32 +7,31 @@
             <v-flex xs12>
                 <v-layout row class="justify-center">
                     <v-flex
-                            xs6 sm4 md2
+                            xs12 sm6
                             class="pa-2"
-                            v-for="(link, type) in options" :key="type"
+                            v-for="option in options" :key="option"
                     >
                         <v-card
-                                :class=" (selection===type) ? 'blue pa-5':' pa-4' "
-                                @click="setSelected(type)">
-
-                            <v-img
-                                    :src="link"
-                            />
+                                :class="((selection===option) ? 'blue ':'') + 'pa-4'"
+                                @click="setSelected(option)">
+                            <v-card-title>
+                                {{option}}
+                            </v-card-title>
                         </v-card>
 
                     </v-flex>
                 </v-layout>
             </v-flex>
 
+
         </v-layout>
 
     </div>
-
 </template>
 
 <script>
     export default {
-        name: "Types",
+        name: "Category",
         props: ['selectionProp'],
         data() {
             return {
@@ -42,7 +41,7 @@
         },
         computed: {
             message: function () {
-                return (this.selection === '') ? 'Please Select Type' : 'You have selected'
+                return (this.selection === '') ? 'Please Select Category' : 'You have selected'
             }
         },
         methods: {
@@ -52,17 +51,9 @@
             },
         },
         created(){
-          this.selection = this.selectionProp
-            this.options = {
-                'Body': require('@/assets/typesImgs/body.png'),
-                'Drone': require('@/assets/typesImgs/drone.png'),
-                'Battery': require('@/assets/typesImgs/battery.png'),
-                'Flash': require('@/assets/typesImgs/flash.png'),
-                'lens': require('@/assets/typesImgs/lens.png'),
-                'Memory': require('@/assets/typesImgs/memory.png'),
-            }
+            this.selection = this.selectionProp
+            this.options = ['Service', 'Equipment']
         }
-
     }
 </script>
 
