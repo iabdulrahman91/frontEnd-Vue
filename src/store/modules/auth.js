@@ -1,4 +1,5 @@
 import axios from 'axios';
+
 const state = {
     user: null,
     token: localStorage.getItem('token' || null),
@@ -18,7 +19,7 @@ const getters = {
 const actions = {
 
     // @login
-    async login({ commit }, formData) {
+    async login({commit}, formData) {
         commit('setLoadingUser', true);
         await axios.post(
             '/login',
@@ -37,47 +38,53 @@ const actions = {
     },
 
     // @register
-    async register({ commit }, formData){
-      commit('setLoadingUser', true);
-      await axios.post(
-          '/register',
-          formData
-      )
-          .then(response => {
-              commit('setUser', response.data.user);
-              commit('setToken', response.data.token);
+    async register({commit}, formData) {
+        commit('setLoadingUser', true);
+        await axios.post(
+            '/register',
+            formData
+        )
+            .then(response => {
+                commit('setUser', response.data.user);
+                commit('setToken', response.data.token);
 
-          })
-          .catch(reason => {
-          commit('setError', reason.response.data.error)
-      })
+            })
+            .catch(reason => {
+                commit('setError', reason.response.data.error)
+            })
         commit('setLoadingUser', false);
 
 
     },
 
     // @details
-    async details({ commit }) {
+    async details({commit}) {
         commit('setLoadingUser', true);
-        let config = {
-            headers: {
-                'Authorization': 'Bearer ' + this.getters.Token,
-            },
-        };
-        await axios.get(
-            '/details', config
-        )
-            .then(response => {
-            commit('setUser', response.data.user);
+        if (this.getters.Token === null) {
+            commit('clearAuth')
+        } else {
+            let config = {
+                headers: {
+                    'Authorization': 'Bearer ' + this.getters.Token,
+                },
+            };
+            await axios.get(
+                '/details', config
+            )
+                .then(response => {
+                    commit('setUser', response.data.user);
 
-        })
-            .catch(reason => {
-                commit('setError', reason)
-            })
+                })
+                .catch(reason => {
+                    commit('setError', reason)
+                    commit('clearAuth')
+                })
+        }
+
         commit('setLoadingUser', false);
     },
 
-    async logout({ commit }) {
+    async logout({commit}) {
         commit('setLoadingUser', true)
         commit('clearAuth')
         commit('setLoadingUser', false)
@@ -96,7 +103,7 @@ const mutations = {
 
     setError: (state, error) => (state.error = error),
 
-    clearAuth: (state) => (localStorage.removeItem('user'),localStorage.removeItem('token'),  state.token = null, state.user = null)
+    clearAuth: (state) => (localStorage.removeItem('user'), localStorage.removeItem('token'), state.token = null, state.user = null)
 
 
 };
