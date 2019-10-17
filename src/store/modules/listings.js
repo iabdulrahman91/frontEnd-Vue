@@ -4,12 +4,14 @@ const state = {
     listings: [],
     loading: true,
     listing: null,
+    error: null,
 };
 
 const getters = {
     allListings: state => state.listings,
     Listing: state => state.listing,
     Loading: state => state.loading,
+    ListingError: state => state.error,
 };
 
 const actions = {
@@ -38,13 +40,24 @@ const actions = {
     },
 
     // @store
-    async addListing({ commit }, title) {
-        const response = await axios.post(
+    async postListing({ commit }, formData) {
+        commit('setLoading', true);
+        let config = {
+            headers: {
+                'Authorization': 'Bearer ' + this.getters.Token,
+            },
+        };
+        await axios.post(
             '/listings',
-            { title, completed: false }
-        );
-
-        commit('newListing', response.data);
+            formData,config)
+            .then(res => {
+                commit('setListing', res.data)
+                commit('setListingError', null)
+            })
+            .catch(reason => {
+                commit('setListingError', reason.response.data)
+            })
+        commit('setLoading', false);
     },
 
     // @destroy
@@ -88,17 +101,8 @@ const mutations = {
 
     setListing: (state, listing) => (state.listing = listing),
 
-    newListing: (state, listing) => state.listings.unshift(listing),
+    setListingError: (state, error) => (state.listingError = error),
 
-    removeListing: (state, id) =>
-        (state.listings = state.listings.filter(listing => listing.id !== id)),
-
-    updateListing: (state, updlisting) => {
-        const index = state.listings.findIndex(listing => listing.id === updlisting.id);
-        if (index !== -1) {
-            state.listings.splice(index, 1, updlisting);
-        }
-    }
 };
 
 export default {

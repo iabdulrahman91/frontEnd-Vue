@@ -61,7 +61,7 @@
             ></vc-date-picker>
         </v-flex>
         <v-flex xs12 sm4 class="mx-5 my-1">
-            <v-btn color="primary" block>
+            <v-btn color="primary" block @click="$emit('Post')">
                 <v-icon left>mdi-checkbox-marked-circle-outline</v-icon>
                 Post
             </v-btn>
@@ -77,28 +77,18 @@
 
 <script>  /* eslint-disable */
 import {mapGetters, mapActions} from 'vuex';
-import moment from 'moment'
+
     export default {
         name: "Review",
         props: ['selectionProp'],
         data(){
             return{
                 dates: null,
-                days: [],
             }
         },
         methods: {
             ...mapActions(['fetchCity']),
-            async prepareDays(){
-                this.dates.forEach(r => {
-                    var s = moment(r.start)
-                    var e = moment(r.end)
-                    while(s.get('date')<=e.get('date')){
-                        this.days.push(s.format('DD-MM-YYYY'))
-                        s.add(1,'days')
-                    }
-                })
-            }
+
         },
         computed: {
             ...mapGetters(['City', 'LoadingLocation'])
@@ -106,7 +96,6 @@ import moment from 'moment'
         created(){
             this.fetchCity(this.selectionProp.location)
             this.dates = this.selectionProp.attributes[0].dates
-            this.prepareDays()
         }
     }
 </script>

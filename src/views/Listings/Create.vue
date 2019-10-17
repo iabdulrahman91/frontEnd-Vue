@@ -40,7 +40,7 @@
                     <Day :selectionProp="attributes" @Selected="attributes = $event"/>
                 </v-flex>
             </v-layout>
-            <Review v-if="currentStep>=steps.length" :selectionProp="inputs"/>
+            <Review v-if="currentStep>=steps.length" :selectionProp="inputs" @Post="addListing"/>
         </v-flex>
 
         <!--Actions section-->
@@ -114,6 +114,7 @@
 </template>
 
 <script>
+    /* eslint-disable */
     import {mapActions} from 'vuex';
     import Category from "@/components/Listing/Create/Category";
     import Type from "@/components/Listing/Create/Type";
@@ -123,6 +124,7 @@
     import Price from "@/components/Listing/Create/Price";
     import Day from "@/components/Listing/Create/Day";
     import Review from "@/components/Listing/Create/Review";
+    import moment from 'moment'
 
     export default {
         name: "Create",
@@ -131,7 +133,7 @@
         },
         data() {
             return {
-                currentStep: 4,
+                currentStep: 0,
                 steps: ['category', 'type', 'company', 'model', 'detail'],
                 type: null,
                 category: null,
@@ -185,19 +187,40 @@
                     delivery: this.delivery,
                     price: this.price,
                     attributes: this.attributes,
-
                 }
-
-            }
+            },
         },
         methods: {
-            ...mapActions(["fetchCities"]),
+            ...mapActions(["fetchCities", 'postListing']),
             next() {
                 this.currentStep = (this.hasNext) ? this.currentStep + 1 : this.steps.length
             },
             back() {
                 this.currentStep = (this.hasBack) ? this.currentStep - 1 : 0
             },
+            addListing() {
+                var days = [];
+                this.attributes[0].dates.forEach(r => {
+                    var s = moment(r.start);
+                    var e = moment(r.end);
+                    while (s.get('date') <= e.get('date')) {
+                        days.push(s.format('DD-MM-YYYY'));
+                        s.add(1, 'days')
+                    }
+                });
+                var fd = new FormData();
+                fd.append('location', this.location)
+                fd.append('price', this.price)
+                fd.append('deliverable', this.delivery)
+                fd.append('days', JSON.stringify(days)),
+                fd.append('item', JSON.stringify({
+                    category: this.category,
+                    type: this.type,
+                    company: this.company,
+                    model: this.model
+                }));
+                this.postListing(fd);
+            }
         },
 
         components: {
