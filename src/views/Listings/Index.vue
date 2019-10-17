@@ -1,7 +1,7 @@
 <template>
     <div v-if="!Loading">
         <ListingCard/>
-        <Pagination/>
+        <Pagination v-if="allListings.data !== null && allListings.data.length>0"/>
     </div>
 
 </template>

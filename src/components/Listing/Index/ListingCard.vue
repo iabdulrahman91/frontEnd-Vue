@@ -23,7 +23,9 @@
                     </v-row>
                 </v-img>
 
-                <v-card-title>{{listing.item.product}} | {{listing.item.company}} | {{listing.item.category}}
+
+                <v-card-title>
+                    <ProductLabel :item="listing.item"/>
                 </v-card-title>
 
                 <v-card-text>
@@ -80,17 +82,25 @@
 
 <script>
     import {mapGetters} from "vuex";
+    import ProductLabel from "@/components/Listing/Index/ProductLabel";
 
     export default {
         name: "ListingCard",
         computed: {
             ...mapGetters(["allListings"]),
+
         },
         methods: {
             async city(id) {
                 return id
-            }
+            },
+
+        },
+        components: {
+
+            ProductLabel,
         }
+
     }
 </script>
 
